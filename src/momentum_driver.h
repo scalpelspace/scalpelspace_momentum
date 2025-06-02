@@ -25,37 +25,19 @@ extern "C" {
 
 #define MOMENTUM_START_OF_FRAME 0xAA
 
-#define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x11
-#define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x12
-#define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x13
-#define MOMENTUM_FRAME_TYPE_IMU_LINACCEL 0x14
-#define MOMENTUM_FRAME_TYPE_IMU_GRAV 0x15
-#define MOMENTUM_FRAME_TYPE_BAR_ENV 0x16
-#define MOMENTUM_FRAME_TYPE_GPS_COORD 0x17
-#define MOMENTUM_FRAME_TYPE_GPS_DATETIME 0x18
-#define MOMENTUM_FRAME_TYPE_GPS_STATS 0x19
+#define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x21
+#define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x22
+#define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x23
+#define MOMENTUM_FRAME_TYPE_IMU_LINACCEL 0x24
+#define MOMENTUM_FRAME_TYPE_IMU_GRAV 0x25
+#define MOMENTUM_FRAME_TYPE_BAR_ENV 0x26
+#define MOMENTUM_FRAME_TYPE_GPS_DATETIME 0x27
+#define MOMENTUM_FRAME_TYPE_GPS_COORD 0x28
+#define MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED 0x29
+#define MOMENTUM_FRAME_TYPE_GPS_HEAD 0x2A
+#define MOMENTUM_FRAME_TYPE_GPS_STATS 0x2B
 
 #define MOMENTUM_CRC_INITIAL 0xFFFF
-
-/** Portable type alias. ******************************************************/
-
-// When the macro MOMENTUM_USE_FLOAT_32 is defined on the SPI controller side,
-// incoming 64-bit IEEE-754 values to be down-cast to 32-bit floats. The SPI
-// peripheral (STM32 sensor hub) firmware itself always packs and sends full
-// 64-bit doubles.
-//
-// On AVR systems (where double is a 32-bit float), the macro is enabled
-// automatically, so AVR based SPI controllers get float precision by default.
-
-#if defined(__AVR__) && !defined(MOMENTUM_USE_FLOAT_32)
-#define MOMENTUM_USE_FLOAT_32
-#endif
-
-#ifdef MOMENTUM_USE_FLOAT_32
-typedef float unpacked_real_t;
-#else
-typedef double unpacked_real_t;
-#endif
 
 /** Public types. *************************************************************/
 
@@ -103,29 +85,27 @@ typedef struct {
   float bno085_gravity_x;
   float bno085_gravity_y;
   float bno085_gravity_z;
-  unpacked_real_t bmp390_temperature;
-  unpacked_real_t bmp390_pressure;
-  uint8_t gps_hour;              // 0-23.
-  uint8_t gps_minute;            // 0-59.
-  uint8_t gps_second;            // 0-59.
-  uint8_t gps_day;               // 1-31.
-  uint8_t gps_month;             // 1-12.
-  uint8_t gps_year;              // Year since 2000 (25 for 2025).
-  unpacked_real_t gps_latitude;  // Latitude in decimal degrees.
-  char gps_lat_dir;              // Latitude Direction (N/S).
-  unpacked_real_t gps_longitude; // Longitude in decimal degrees.
-  char gps_lon_dir;              // Longitude Direction (E/W).
-  uint8_t gps_fix_quality;       // GPS Fix Quality.
-  //  0 = No fix.
-  //  1 = Autonomous GNSS fix.
-  //  2 = Differential GNSS fix.
-  //  4 = RTK fixed.
-  //  5 = RTK float.
-  //  6 = Estimated/dead reckoning fix.
-  uint8_t gps_satellites;        // Number of Satellites.
-  float gps_hdop;                // Horizontal Dilution of Precision.
-  unpacked_real_t gps_altitude;  // Altitude in meters.
-  unpacked_real_t gps_geoid_sep; // Geoidal Separation.
+  float bmp390_temperature;
+  float bmp390_pressure;
+  uint8_t gps_position_fix;
+  uint8_t gps_year;       // RTC date, year.
+  uint8_t gps_month;      // RTC date, month.
+  uint8_t gps_day;        // RTC date, day.
+  uint8_t gps_hour;       // RTC time, hour.
+  uint8_t gps_minute;     // RTC time, minute.
+  uint8_t gps_second;     // RTC time, second.
+  float gps_latitude;     // Latitude in decimal degrees.
+  char gps_lat_dir;       // Latitude Direction (N/S).
+  float gps_longitude;    // Longitude in decimal degrees.
+  char gps_lon_dir;       // Longitude Direction (E/W).
+  float gps_altitude_m;   // Altitude in meters.
+  float gps_geoid_sep_m;  // Geoidal Separation.
+  float gps_speed_knots;  // Speed over the ground in knots.
+  float gps_course_deg;   // Course over ground in degrees.
+  float gps_magnetic_deg; // Magnetic variation in degrees.
+  char gps_mag_dir;       // Magnetic variation direction (E/W).
+  uint8_t gps_satellites; // Number of Satellites.
+  float gps_hdop;         // Horizontal Dilution of Precision (HDOP).
 } sensor_data_t;
 
 /** Public functions. *********************************************************/
@@ -379,11 +359,68 @@ uint8_t build_gps_coord_payload(momentum_frame_t *f, sensor_data_t *s);
 uint8_t parse_gps_coord_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
+ * @brief Pack GPS altitude and speed data into the frame payload.
+ *
+ * Serializes GPS altitude fields (altitude, geoidal separation) and speed
+ * (speed knots) from the provided sensor data into the frame payload. Updates
+ * f->length accordingly.
+ *
+ * @param f Pointer to the frame to populate.
+ * @param s Pointer to the sensor_data_t containing source GPS altitude and
+ *          speed values.
+ *
+ * @return Number of bytes written into f->payload.
+ */
+uint8_t build_gps_altitude_speed_payload(momentum_frame_t *f, sensor_data_t *s);
+
+/**
+ * @brief Unpack GPS altitude and speed data from the frame payload.
+ *
+ * Deserializes GPS altitude fields (altitude, geoidal separation) and speed
+ * (speed knots) from the provided frame payload into sensor data.
+ *
+ * @param f Pointer to the frame to read.
+ * @param s Pointer to the sensor_data_t to update GPS altitude and speed
+ *          values.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t parse_gps_altitude_speed_payload(const momentum_frame_t *f,
+                                         sensor_data_t *s);
+
+/**
+ * @brief Pack GPS heading data into the frame payload.
+ *
+ * Serializes GPS heading fields (course, magnetic variation, magnetic variation
+ * direction) from the provided sensor data into the frame payload. Updates
+ * f->length accordingly.
+ *
+ * @param f Pointer to the frame to populate.
+ * @param s Pointer to the sensor_data_t containing source GPS heading values.
+ *
+ * @return Number of bytes written into f->payload.
+ */
+uint8_t build_gps_heading_payload(momentum_frame_t *f, sensor_data_t *s);
+
+/**
+ * @brief Unpack GPS heading data from the frame payload.
+ *
+ * Deserializes GPS heading fields (course, magnetic variation, magnetic
+ * variation direction) from the provided frame payload into sensor data.
+ *
+ * @param f Pointer to the frame to read.
+ * @param s Pointer to the sensor_data_t to update GPS heading values.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t parse_gps_heading_payload(const momentum_frame_t *f, sensor_data_t *s);
+
+/**
  * @brief Pack GPS status and statistics into the frame payload.
  *
- * Serializes GPS status fields (fix quality, number of satellites, HDOP) and
- * altitude (altitude above sea level, geoidal separation) from the provided
- * sensor data into the frame payload. Updates f->length accordingly.
+ * Serializes GPS status fields (position fix type, number of satellites, HDOP)
+ * from the provided sensor data into the frame payload. Updates f->length
+ * accordingly.
  *
  * @param f Pointer to the frame to populate.
  * @param s Pointer to the sensor_data_t containing source GPS status values.
@@ -395,9 +432,8 @@ uint8_t build_gps_stats_payload(momentum_frame_t *f, sensor_data_t *s);
 /**
  * @brief Unpack GPS status and statistics from the frame payload.
  *
- * Deserializes GPS status fields (fix quality, number of satellites, HDOP) and
- * altitude (altitude above sea level, geoidal separation) from the provided
- * frame payload into sensor data.
+ * Deserializes GPS status fields (position fix type, number of satellites,
+ * HDOP) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
  * @param s Pointer to the sensor_data_t to update GPS status values.
