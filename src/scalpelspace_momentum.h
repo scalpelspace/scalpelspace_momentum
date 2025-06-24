@@ -16,6 +16,7 @@ public:
   void begin();
   momentum_status_t requestData(uint8_t frameType, sensor_data_t &data);
 
+  void getAll(sensor_data_t &data);
   momentum_status_t getQuat(sensor_data_t &data);
   momentum_status_t getGyro(sensor_data_t &data);
   momentum_status_t getAccel(sensor_data_t &data);

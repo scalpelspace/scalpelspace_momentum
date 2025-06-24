@@ -77,6 +77,20 @@ momentum_status_t Momentum::requestData(uint8_t frameType,
   return parse_momentum_frame(&_frame, &data);
 }
 
+void Momentum::getAll(sensor_data_t &data) {
+  requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data);
+  requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data);
+}
+
 momentum_status_t Momentum::getQuat(sensor_data_t &data) {
   return requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data);
 }
