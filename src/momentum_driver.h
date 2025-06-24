@@ -67,45 +67,45 @@ typedef enum {
  * @brief Momentum sensor hub sensor data.
  */
 typedef struct {
-  float bno085_quaternion_i;
-  float bno085_quaternion_j;
-  float bno085_quaternion_k;
-  float bno085_quaternion_real;
-  float bno085_quaternion_accuracy_rad;
-  float bno085_quaternion_accuracy_deg;
-  float bno085_gyro_x;
-  float bno085_gyro_y;
-  float bno085_gyro_z;
-  float bno085_accel_x;
-  float bno085_accel_y;
-  float bno085_accel_z;
-  float bno085_lin_accel_x;
-  float bno085_lin_accel_y;
-  float bno085_lin_accel_z;
-  float bno085_gravity_x;
-  float bno085_gravity_y;
-  float bno085_gravity_z;
-  float bmp390_temperature;
-  float bmp390_pressure;
+  float quaternion_i;
+  float quaternion_j;
+  float quaternion_k;
+  float quaternion_real;
+  float quaternion_accuracy_rad;
+  float quaternion_accuracy_deg;
+  float gyro_x;
+  float gyro_y;
+  float gyro_z;
+  float accel_x;
+  float accel_y;
+  float accel_z;
+  float lin_accel_x;
+  float lin_accel_y;
+  float lin_accel_z;
+  float gravity_x;
+  float gravity_y;
+  float gravity_z;
+  float temperature;
+  float pressure;
   uint8_t gps_position_fix;
-  uint8_t gps_year;       // RTC date, year.
-  uint8_t gps_month;      // RTC date, month.
-  uint8_t gps_day;        // RTC date, day.
-  uint8_t gps_hour;       // RTC time, hour.
-  uint8_t gps_minute;     // RTC time, minute.
-  uint8_t gps_second;     // RTC time, second.
-  float gps_latitude;     // Latitude in decimal degrees.
-  char gps_lat_dir;       // Latitude Direction (N/S).
-  float gps_longitude;    // Longitude in decimal degrees.
-  char gps_lon_dir;       // Longitude Direction (E/W).
-  float gps_altitude_m;   // Altitude in meters.
-  float gps_geoid_sep_m;  // Geoidal Separation.
-  float gps_speed_knots;  // Speed over the ground in knots.
-  float gps_course_deg;   // Course over ground in degrees.
-  float gps_magnetic_deg; // Magnetic variation in degrees.
-  char gps_mag_dir;       // Magnetic variation direction (E/W).
-  uint8_t gps_satellites; // Number of Satellites.
-  float gps_hdop;         // Horizontal Dilution of Precision (HDOP).
+  uint8_t year;          // RTC date, year.
+  uint8_t month;         // RTC date, month.
+  uint8_t day;           // RTC date, day.
+  uint8_t hour;          // RTC time, hour.
+  uint8_t minute;        // RTC time, minute.
+  uint8_t second;        // RTC time, second.
+  float latitude;        // Latitude in decimal degrees.
+  char latitude_dir;     // Latitude Direction (N/S).
+  float longitude;       // Longitude in decimal degrees.
+  char longitude_dir;    // Longitude Direction (E/W).
+  float altitude;        // Altitude in meters.
+  float geoid_sep;       // Geoidal Separation.
+  float ground_speed;    // Speed over the ground in knots.
+  float ground_course;   // Course over ground in degrees.
+  float magnetic_var;    // Magnetic variation in degrees.
+  char magnetic_var_dir; // Magnetic variation direction (E/W).
+  uint8_t satellites;    // Number of Satellites.
+  float hdop;            // Horizontal Dilution of Precision (HDOP).
 } sensor_data_t;
 
 /** Public functions. *********************************************************/
