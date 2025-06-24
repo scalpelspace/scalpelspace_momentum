@@ -38,7 +38,7 @@ Utilizes a local copy of [
 
 Momentum momentum(10);  // SPI CS pin 10
 
-sensor_data_t data;  // Sensor data
+sensor_data_t data;  // Sensor data variable
 
 void setup() {
   Serial.begin(9600);  // Set baud rate
@@ -46,23 +46,14 @@ void setup() {
 }
 
 void loop() {
-  // Example request linear acceleration (gravity adjusted)
-  momentum_status_t status = momentum.requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data);
+  momentum.getLinAccel(data);
 
-  // Check request response
-  if (status != MOMENTUM_OK) {
-    // Failed request
-    Serial.print("Error reading frame ");
-    Serial.println(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, HEX);
-  } else {
-    // Successful request, print data
-    Serial.print("lin_accel_x:");
-    Serial.print(data.lin_accel_x, 6);
-    Serial.print(",lin_accel_y:");
-    Serial.print(data.lin_accel_y, 6);
-    Serial.print(",lin_accel_z:");
-    Serial.println(data.lin_accel_z, 6);
-  }
+  Serial.print("lin_accel_x:");
+  Serial.print(data.lin_accel_x, 6);
+  Serial.print(",lin_accel_y:");
+  Serial.print(data.lin_accel_y, 6);
+  Serial.print(",lin_accel_z:");
+  Serial.println(data.lin_accel_z, 6);
 
   delay(1);  // Small delay
 }
