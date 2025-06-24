@@ -57,11 +57,11 @@ void loop() {
   } else {
     // Successful request, print data
     Serial.print("lin_accel_x:");
-    Serial.print(data.bno085_lin_accel_x, 6);
+    Serial.print(data.lin_accel_x, 6);
     Serial.print(",lin_accel_y:");
-    Serial.print(data.bno085_lin_accel_y, 6);
+    Serial.print(data.lin_accel_y, 6);
     Serial.print(",lin_accel_z:");
-    Serial.println(data.bno085_lin_accel_z, 6);
+    Serial.println(data.lin_accel_z, 6);
   }
 
   delay(1);  // Small delay
