@@ -77,6 +77,50 @@ momentum_status_t Momentum::requestData(uint8_t frameType,
   return parse_momentum_frame(&_frame, &data);
 }
 
+momentum_status_t Momentum::getQuat(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data);
+}
+
+momentum_status_t Momentum::getGyro(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data);
+}
+
+momentum_status_t Momentum::getAccel(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data);
+}
+
+momentum_status_t Momentum::getLinAccel(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data);
+}
+
+momentum_status_t Momentum::getGrav(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data);
+}
+
+momentum_status_t Momentum::getEnv(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data);
+}
+
+momentum_status_t Momentum::getDateTime(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data);
+}
+
+momentum_status_t Momentum::getCoord(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data);
+}
+
+momentum_status_t Momentum::getAltSpeed(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data);
+}
+
+momentum_status_t Momentum::getHeading(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data);
+}
+
+momentum_status_t Momentum::getStats(sensor_data_t &data) {
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data);
+}
+
 void Momentum::printData(const sensor_data_t &d) {
   // -- IMU Quaternion ------------------------
   Serial.print("Quat: ");
