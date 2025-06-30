@@ -374,3 +374,23 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
 
   Serial.println(); // end-of-line
 }
+
+momentum_status_t Momentum::setLED(uint8_t led_i, uint8_t r, uint8_t g,
+                                   uint8_t b) {
+  // Prepare LED payload
+  led_data_t led_data = {led_i, r, g, b};
+
+  // Build full frame
+  momentum_frame_t command;
+  memset(&command, 0, sizeof(command)); // Zero-initialize everything
+  command.start_of_frame = MOMENTUM_START_OF_COMMAND_FRAME;
+  command.frame_type = MOMENTUM_FRAME_TYPE_LED;
+  command.sequence = 0;                   // TODO: Not yet implemented
+  build_led_payload(&command, &led_data); // Length updated within
+  build_crc(&command);
+
+  // Send the command frame
+  sendMomentumFrame(command);
+
+  return MOMENTUM_OK;
+}

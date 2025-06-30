@@ -118,6 +118,13 @@ typedef struct {
   float hdop;            // Horizontal Dilution of Precision (HDOP).
 } sensor_data_t;
 
+typedef struct {
+  uint8_t index;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} led_data_t;
+
 /** Public functions. *********************************************************/
 
 /**
@@ -451,6 +458,26 @@ uint8_t build_gps_stats_payload(momentum_frame_t *f, sensor_data_t *s);
  * @return Number of bytes read (== f->length).
  */
 uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s);
+
+/**
+ * @brief Pack LED data into the frame payload.
+ *
+ * @param f Pointer to the frame to populate.
+ * @param l Pointer to the led_data_t to populate.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t build_led_payload(momentum_frame_t *f, led_data_t *l);
+
+/**
+ * @brief Unpack LED data from the frame payload.
+ *
+ * @param f Pointer to the frame to read.
+ * @param l Pointer to the led_data_t to read.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t parse_led_payload(const momentum_frame_t *f, led_data_t *l);
 
 /**
  * @brief Top-level parser for any incoming request response momentum_frame_t.

@@ -291,6 +291,25 @@ uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s) {
   return (uint8_t)(p - f->payload);
 }
 
+uint8_t build_led_payload(momentum_frame_t *f, led_data_t *l) {
+  uint8_t *start = f->payload;
+  uint8_t *p = f->payload;
+  p = pack_uint_8(p, l->index);
+  p = pack_uint_8(p, l->r);
+  p = pack_uint_8(p, l->g);
+  p = pack_uint_8(p, l->b);
+  return update_payload_length(f, start, p);
+}
+
+uint8_t parse_led_payload(const momentum_frame_t *f, led_data_t *l) {
+  const uint8_t *p = f->payload;
+  p = unpack_uint_8(p, &l->index);
+  p = unpack_uint_8(p, &l->r);
+  p = unpack_uint_8(p, &l->g);
+  p = unpack_uint_8(p, &l->b);
+  return (uint8_t)(p - f->payload);
+}
+
 momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
                                                 sensor_data_t *s) {
   if (f->start_of_frame != MOMENTUM_START_OF_RESPONSE_FRAME ||
