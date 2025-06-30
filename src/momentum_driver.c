@@ -291,9 +291,9 @@ uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s) {
   return (uint8_t)(p - f->payload);
 }
 
-momentum_status_t parse_momentum_frame(const momentum_frame_t *f,
-                                       sensor_data_t *s) {
-  if (f->start_of_frame != MOMENTUM_START_OF_FRAME ||
+momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
+                                                sensor_data_t *s) {
+  if (f->start_of_frame != MOMENTUM_START_OF_RESPONSE_FRAME ||
       f->length > MOMENTUM_MAX_DATA_SIZE)
     return MOMENTUM_ERROR_BAD_FRAME;
 

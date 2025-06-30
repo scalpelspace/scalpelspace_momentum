@@ -18,6 +18,27 @@ extern "C" {
 
 Momentum::Momentum(uint8_t csPin) : _csPin(csPin) {}
 
+void Momentum::sendMomentumFrame(const momentum_frame_t &frame) {
+  // 1) Byte-pointer into the struct
+  const uint8_t *txPtr = reinterpret_cast<const uint8_t *>(&frame);
+
+  // 2) Total bytes = 4 (sof, type, seq, len) + payload length + 2 (crc)
+  size_t txLen = 4 + frame.length + sizeof(frame.crc);
+
+  // 3) Start transaction and lower CS
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(_csPin, LOW);
+
+  // 4) Send each byte
+  for (size_t i = 0; i < txLen; ++i) {
+    SPI.transfer(txPtr[i]);
+  }
+
+  // 5) Raise CS & end transaction
+  digitalWrite(_csPin, HIGH);
+  SPI.endTransaction();
+}
+
 void Momentum::begin() {
   pinMode(_csPin, OUTPUT);
   digitalWrite(_csPin, HIGH);
@@ -26,28 +47,33 @@ void Momentum::begin() {
 
 momentum_status_t Momentum::requestData(uint8_t frameType,
                                         sensor_data_t &data) {
-  // PHASE 1: Send command
-  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
-  digitalWrite(_csPin, LOW);
-  SPI.transfer(frameType);
-  digitalWrite(_csPin, HIGH);
-  SPI.endTransaction();
+  // Create a request frame
+  momentum_frame_t request;
+  memset(&request, 0, sizeof(request)); // Zero-initialize everything
+  request.start_of_frame = MOMENTUM_START_OF_REQUEST_FRAME;
+  request.frame_type = frameType;
+  request.sequence = 0; // TODO: Not yet implemented
+  request.length = 0;   // No payload
+  build_crc(&request);
+
+  // Send the request frame
+  sendMomentumFrame(request);
 
   // TODO: Validate! Small pause to let the SPI peripheral device to load
   delayMicroseconds(50);
 
-  // PHASE 2: Read response
+  // Clock in response
   SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
   digitalWrite(_csPin, LOW);
 
-  // Read header
+  // Read response header
   uint8_t sof = SPI.transfer(0x00);
   uint8_t type = SPI.transfer(0x00);
   uint8_t seq = SPI.transfer(0x00);
   uint8_t len = SPI.transfer(0x00);
 
-  // Validate basic frame
-  if (sof != MOMENTUM_START_OF_FRAME || type != frameType ||
+  // Validate basic response frame header
+  if (sof != MOMENTUM_START_OF_RESPONSE_FRAME || type != frameType ||
       len > MOMENTUM_MAX_DATA_SIZE) {
     digitalWrite(_csPin, HIGH);
     SPI.endTransaction();
@@ -74,7 +100,7 @@ momentum_status_t Momentum::requestData(uint8_t frameType,
 
   // Store CRC and parse
   _frame.crc = (uint16_t)lo | ((uint16_t)hi << 8);
-  return parse_momentum_frame(&_frame, &data);
+  return parse_momentum_response_frame(&_frame, &data);
 }
 
 void Momentum::getAll(sensor_data_t &data) {

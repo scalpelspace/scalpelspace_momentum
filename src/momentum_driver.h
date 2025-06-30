@@ -23,19 +23,29 @@ extern "C" {
 
 #define MOMENTUM_MAX_DATA_SIZE 32
 
-#define MOMENTUM_START_OF_FRAME 0xAA
+#define MOMENTUM_START_OF_COMMAND_FRAME 0x00
+#define MOMENTUM_START_OF_REQUEST_FRAME 0x80
+#define MOMENTUM_START_OF_RESPONSE_FRAME 0x81
 
-#define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x21
-#define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x22
-#define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x23
-#define MOMENTUM_FRAME_TYPE_IMU_LINACCEL 0x24
-#define MOMENTUM_FRAME_TYPE_IMU_GRAV 0x25
-#define MOMENTUM_FRAME_TYPE_BAR_ENV 0x26
-#define MOMENTUM_FRAME_TYPE_GPS_DATETIME 0x27
-#define MOMENTUM_FRAME_TYPE_GPS_COORD 0x28
-#define MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED 0x29
-#define MOMENTUM_FRAME_TYPE_GPS_HEAD 0x2A
-#define MOMENTUM_FRAME_TYPE_GPS_STATS 0x2B
+// Master request (no response from Momentum) frame types.
+// Starts after MOMENTUM_START_OF_COMMAND_FRAME.
+// Starts before MOMENTUM_START_OF_REQUEST_FRAME.
+#define MOMENTUM_FRAME_TYPE_LED 0x10
+
+// Master request and response from Momentum frame types.
+// Starts after MOMENTUM_START_OF_RESPONSE_FRAME.
+// Starts before 0xFF.
+#define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x90
+#define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x91
+#define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x92
+#define MOMENTUM_FRAME_TYPE_IMU_LINACCEL 0x93
+#define MOMENTUM_FRAME_TYPE_IMU_GRAV 0x94
+#define MOMENTUM_FRAME_TYPE_BAR_ENV 0xA0
+#define MOMENTUM_FRAME_TYPE_GPS_DATETIME 0xB0
+#define MOMENTUM_FRAME_TYPE_GPS_COORD 0xB1
+#define MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED 0xB2
+#define MOMENTUM_FRAME_TYPE_GPS_HEAD 0xB3
+#define MOMENTUM_FRAME_TYPE_GPS_STATS 0xB4
 
 #define MOMENTUM_CRC_INITIAL 0xFFFF
 
@@ -45,10 +55,10 @@ extern "C" {
  * @brief Momentum sensor hub SPI communication frame.
  */
 typedef struct __attribute__((packed)) {
-  uint8_t start_of_frame;                  // Start of frame (SOF) for syncing.
-  uint8_t frame_type;                      // Frame type identifier.
-  uint8_t sequence;                        // Roll-over counter.
-  uint8_t length;                          // Number of data payload bytes.
+  uint8_t start_of_frame;                  // Header: start of frame (SOF).
+  uint8_t frame_type;                      // Header: frame type identifier.
+  uint8_t sequence;                        // Header: roll-over counter.
+  uint8_t length;                          // Header: Number of data bytes.
   uint8_t payload[MOMENTUM_MAX_DATA_SIZE]; // Data payload.
   uint16_t crc;                            // CRC-16 of frame_type...data[-1].
 } momentum_frame_t;
@@ -443,18 +453,18 @@ uint8_t build_gps_stats_payload(momentum_frame_t *f, sensor_data_t *s);
 uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Top-level parser for any incoming momentum_frame_t.
+ * @brief Top-level parser for any incoming request response momentum_frame_t.
  *
  * @param f Pointer to received, packed frame.
- * @param s Dest sensor_data_t to populate on success.
+ * @param s Destination sensor_data_t to populate on success.
  *
  * @return  MOMENTUM_OK on success, otherwise an error code:
  *          - MOMENTUM_ERROR_CRC if CRC mismatch.
  *          - MOMENTUM_ERROR_FRAME_TYPE if unknown frame_type.
  *          - MOMENTUM_ERROR_BAD_FRAME if SOF/length bad.
  */
-momentum_status_t parse_momentum_frame(const momentum_frame_t *f,
-                                       sensor_data_t *s);
+momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
+                                                sensor_data_t *s);
 
 /** CPP guard close. **********************************************************/
 

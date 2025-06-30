@@ -35,6 +35,8 @@ public:
 private:
   uint8_t _csPin;
   momentum_frame_t _frame;
+
+  void sendMomentumFrame(const momentum_frame_t &frame);
 };
 
 #endif
