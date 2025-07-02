@@ -63,7 +63,7 @@ momentum_status_t Momentum::requestData(uint8_t frameType,
   delayMicroseconds(50);
 
   // Clock in response
-  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
   digitalWrite(_csPin, LOW);
 
   // Read response header
