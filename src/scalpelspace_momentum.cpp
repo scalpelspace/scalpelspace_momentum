@@ -410,6 +410,7 @@ momentum_status_t Momentum::reset(void) {
   command.start_of_frame = MOMENTUM_START_OF_COMMAND_FRAME;
   command.frame_type = MOMENTUM_FRAME_TYPE_RESET;
   command.sequence = 0; // TODO: Not yet implemented
+  command.length = 0;
   build_crc(&command);
 
   // Send the command frame
