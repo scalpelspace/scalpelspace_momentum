@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @file scalpelspace_momentum.cpp
+ * @file scalpelspace_momentum.h
  * @brief Momentum sensor hub library for Arduino.
  *******************************************************************************
  */
