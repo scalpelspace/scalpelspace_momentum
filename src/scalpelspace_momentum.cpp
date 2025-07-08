@@ -178,6 +178,17 @@ momentum_status_t Momentum::getStats(sensor_data_t &data) {
   return requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data, dummy);
 }
 
+void Momentum::printVersion(const version_t &v) {
+  // MAJOR.MINOR.PATCH-IDENTIFIER
+  Serial.print(v.major);
+  Serial.print(".");
+  Serial.print(v.minor);
+  Serial.print(".");
+  Serial.print(v.patch);
+  Serial.print("-");
+  Serial.println(v.identifier);
+}
+
 void Momentum::printData(const sensor_data_t &d) {
   // -- IMU Quaternion ------------------------
   Serial.print("Quat: ");

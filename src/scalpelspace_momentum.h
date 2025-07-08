@@ -32,6 +32,8 @@ public:
   momentum_status_t getHeading(sensor_data_t &data);
   momentum_status_t getStats(sensor_data_t &data);
 
+  void printVersion(const version_t &v);
+
   void printData(const sensor_data_t &data);
   void printDataSingleLine(const sensor_data_t &data);
 
