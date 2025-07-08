@@ -37,6 +37,8 @@ public:
   void printData(const sensor_data_t &data);
   void printDataSingleLine(const sensor_data_t &data);
 
+  momentum_status_t reset(void);
+
   momentum_status_t setLED(uint8_t led_i, uint8_t r, uint8_t g, uint8_t b);
 
 private:

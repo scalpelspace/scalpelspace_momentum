@@ -30,6 +30,7 @@ extern "C" {
 // Master request (no response from Momentum) frame types.
 // Starts after MOMENTUM_START_OF_COMMAND_FRAME.
 // Starts before MOMENTUM_START_OF_REQUEST_FRAME.
+#define MOMENTUM_FRAME_TYPE_RESET 0x06
 #define MOMENTUM_FRAME_TYPE_LED 0x10
 
 // Master request and response from Momentum frame types.
