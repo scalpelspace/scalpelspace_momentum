@@ -35,6 +35,7 @@ extern "C" {
 // Master request and response from Momentum frame types.
 // Starts after MOMENTUM_START_OF_RESPONSE_FRAME.
 // Starts before 0xFF.
+#define MOMENTUM_FRAME_TYPE_VERSION 0x82
 #define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x90
 #define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x91
 #define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x92
@@ -72,6 +73,13 @@ typedef enum {
   MOMENTUM_ERROR_FRAME_TYPE = 2, // Invalid frame type.
   MOMENTUM_ERROR_BAD_FRAME = 3,  // Invalid start of frame (SOF) or length.
 } momentum_status_t;
+
+typedef struct {
+  uint8_t major;
+  uint8_t minor;
+  uint8_t patch;
+  char identifier;
+} version_t;
 
 /**
  * @brief Momentum sensor hub sensor data.
@@ -159,6 +167,26 @@ void build_crc(momentum_frame_t *f);
  * @return true if the computed CRC matches f->crc, false otherwise.
  */
 bool verify_crc(const momentum_frame_t *f);
+
+/**
+ * @brief Pack version data into the frame payload.
+ *
+ * @param f Pointer to the frame to populate.
+ * @param v Pointer to the version_t containing version values.
+ *
+ * @return Number of bytes written into f->payload.
+ */
+uint8_t build_version_payload(momentum_frame_t *f, version_t *v);
+
+/**
+ * @brief Unpack version data from the frame payload.
+ *
+ * @param f Pointer to the frame to read.
+ * @param v Pointer to the version_t to update version values.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t parse_version_payload(const momentum_frame_t *f, version_t *v);
 
 /**
  * @brief Pack quaternion data into the frame payload.
@@ -484,6 +512,7 @@ uint8_t parse_led_payload(const momentum_frame_t *f, led_data_t *l);
  *
  * @param f Pointer to received, packed frame.
  * @param s Destination sensor_data_t to populate on success.
+ * @param v Destination version_t to populate on success.
  *
  * @return  MOMENTUM_OK on success, otherwise an error code:
  *          - MOMENTUM_ERROR_CRC if CRC mismatch.
@@ -491,7 +520,7 @@ uint8_t parse_led_payload(const momentum_frame_t *f, led_data_t *l);
  *          - MOMENTUM_ERROR_BAD_FRAME if SOF/length bad.
  */
 momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
-                                                sensor_data_t *s);
+                                                sensor_data_t *s, version_t *v);
 
 /** CPP guard close. **********************************************************/
 

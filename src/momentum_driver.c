@@ -88,6 +88,25 @@ bool verify_crc(const momentum_frame_t *f) {
   return (crc == f->crc);
 }
 
+uint8_t build_version_payload(momentum_frame_t *f, version_t *v) {
+  uint8_t *start = f->payload;
+  uint8_t *p = f->payload;
+  p = pack_uint_8(p, v->major);
+  p = pack_uint_8(p, v->minor);
+  p = pack_uint_8(p, v->patch);
+  p = pack_char_8(p, v->identifier);
+  return update_payload_length(f, start, p);
+}
+
+uint8_t parse_version_payload(const momentum_frame_t *f, version_t *v) {
+  const uint8_t *p = f->payload;
+  p = unpack_uint_8(p, &v->major);
+  p = unpack_uint_8(p, &v->minor);
+  p = unpack_uint_8(p, &v->patch);
+  p = unpack_char_8(p, &v->identifier);
+  return (uint8_t)(p - f->payload);
+}
+
 uint8_t build_quaternion_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
@@ -311,7 +330,8 @@ uint8_t parse_led_payload(const momentum_frame_t *f, led_data_t *l) {
 }
 
 momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
-                                                sensor_data_t *s) {
+                                                sensor_data_t *s,
+                                                version_t *v) {
   if (f->start_of_frame != MOMENTUM_START_OF_RESPONSE_FRAME ||
       f->length > MOMENTUM_MAX_DATA_SIZE)
     return MOMENTUM_ERROR_BAD_FRAME;
@@ -320,6 +340,9 @@ momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
     return MOMENTUM_ERROR_CRC;
 
   switch (f->frame_type) {
+  case MOMENTUM_FRAME_TYPE_VERSION:
+    parse_version_payload(f, v);
+    break;
   case MOMENTUM_FRAME_TYPE_IMU_QUAT:
     parse_quaternion_payload(f, s);
     break;

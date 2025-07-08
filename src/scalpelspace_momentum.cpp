@@ -45,8 +45,8 @@ void Momentum::begin() {
   SPI.begin();
 }
 
-momentum_status_t Momentum::requestData(uint8_t frameType,
-                                        sensor_data_t &data) {
+momentum_status_t Momentum::requestData(uint8_t frameType, sensor_data_t &data,
+                                        version_t &version) {
   // Create a request frame
   momentum_frame_t request;
   memset(&request, 0, sizeof(request)); // Zero-initialize everything
@@ -100,65 +100,82 @@ momentum_status_t Momentum::requestData(uint8_t frameType,
 
   // Store CRC and parse
   _frame.crc = (uint16_t)lo | ((uint16_t)hi << 8);
-  return parse_momentum_response_frame(&_frame, &data);
+  return parse_momentum_response_frame(&_frame, &data, &version);
+}
+
+momentum_status_t Momentum::getVersion(version_t &version) {
+  sensor_data_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_VERSION, dummy, version);
 }
 
 void Momentum::getAll(sensor_data_t &data) {
-  requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data);
-  requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data);
-  requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data);
-  requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data);
-  requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data);
-  requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data);
+  version_t dummy;
+  requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data, dummy);
 }
 
 momentum_status_t Momentum::getQuat(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data, dummy);
 }
 
 momentum_status_t Momentum::getGyro(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data, dummy);
 }
 
 momentum_status_t Momentum::getAccel(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data, dummy);
 }
 
 momentum_status_t Momentum::getLinAccel(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data, dummy);
 }
 
 momentum_status_t Momentum::getGrav(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data, dummy);
 }
 
 momentum_status_t Momentum::getEnv(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data, dummy);
 }
 
 momentum_status_t Momentum::getDateTime(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data, dummy);
 }
 
 momentum_status_t Momentum::getCoord(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data, dummy);
 }
 
 momentum_status_t Momentum::getAltSpeed(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data, dummy);
 }
 
 momentum_status_t Momentum::getHeading(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data, dummy);
 }
 
 momentum_status_t Momentum::getStats(sensor_data_t &data) {
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data);
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data, dummy);
 }
 
 void Momentum::printData(const sensor_data_t &d) {
