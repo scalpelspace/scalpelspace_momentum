@@ -261,10 +261,14 @@ void Momentum::printData(const sensor_data_t &d) {
   // -- GPS Position --------------------------
   Serial.print("GPS Pos: ");
   Serial.print(d.latitude, 6);
+  Serial.print(" (");
   Serial.print(d.latitude_dir);
+  Serial.print(")");
   Serial.print(", ");
   Serial.print(d.longitude, 6);
+  Serial.print(" (");
   Serial.print(d.longitude_dir);
+  Serial.print(")");
   Serial.println();
 
   // -- GPS Altitude / Geoid Separation -------
