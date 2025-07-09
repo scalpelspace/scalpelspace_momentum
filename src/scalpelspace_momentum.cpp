@@ -26,7 +26,7 @@ void Momentum::sendMomentumFrame(const momentum_frame_t &frame) {
   size_t txLen = 4 + frame.length + sizeof(frame.crc);
 
   // 3) Start transaction and lower CS
-  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
   digitalWrite(_csPin, LOW);
 
   // 4) Send each byte
