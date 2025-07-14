@@ -14,7 +14,6 @@ Arduino library for the Momentum dev board.
 * [scalpelspace_momentum](#scalpelspace_momentum)
   * [1 Overview](#1-overview)
   * [2 Simple Example](#2-simple-example)
-  * [3 Quick Docs](#3-quick-docs)
 <!-- TOC -->
 
 </details>
@@ -57,24 +56,4 @@ void loop() {
 
   delay(1);  // Small delay
 }
-```
-
----
-
-## 3 Quick Docs
-
-The following section lists the currently supported data request types:
-
-```
-MOMENTUM_FRAME_TYPE_IMU_QUAT
-MOMENTUM_FRAME_TYPE_IMU_GYRO
-MOMENTUM_FRAME_TYPE_IMU_ACCEL
-MOMENTUM_FRAME_TYPE_IMU_LINACCEL
-MOMENTUM_FRAME_TYPE_IMU_GRAV
-MOMENTUM_FRAME_TYPE_BAR_ENV
-MOMENTUM_FRAME_TYPE_GPS_DATETIME
-MOMENTUM_FRAME_TYPE_GPS_COORD
-MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED
-MOMENTUM_FRAME_TYPE_GPS_HEAD
-MOMENTUM_FRAME_TYPE_GPS_STATS
 ```
