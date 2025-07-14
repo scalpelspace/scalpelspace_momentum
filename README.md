@@ -22,8 +22,8 @@ Arduino library for the Momentum dev board.
 
 ## 1 Overview
 
-Utilizes a local copy of [
-`momentum_driver`](https://github.com/scalpelspace/momentum_driver).
+Utilizes a local copy
+of [`momentum_driver`](https://github.com/scalpelspace/momentum_driver).
 
 - Git submodule not utilized per [Arduino's
   `library-registry` FAQ](https://github.com/arduino/library-registry/blob/main/FAQ.md#are-git-submodules-supported).
