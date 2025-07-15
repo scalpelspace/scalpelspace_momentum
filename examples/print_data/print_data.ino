@@ -8,7 +8,8 @@
 
 #include <scalpelspace_momentum.h>
 
-Momentum momentum(10);  // SPI CS pin 10.
+Momentum momentum(10);  // SPI CS pin 10 (out-of-the-box default).
+// Default: Serial for printing and SPI (4 MHz, mode 0, MSB first).
 
 sensor_data_t data;  // Create variable to track all data.
 
