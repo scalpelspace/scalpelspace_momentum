@@ -10,27 +10,21 @@
 
 Momentum momentum(10);  // SPI CS pin 10.
 
+sensor_data_t data;  // Create variable to track all data.
+
+
 void setup() {
   Serial.begin(9600);  // Set baud rate.
-  momentum.begin();      // Begin communication with Momentum.
-
-  // Print version information.
-  version_t version;               // Crate variable to hold firmware version.
-  momentum.getVersion(version);    // Get version.
-  momentum.printVersion(version);  // Print the Momentum firmware version.
-
-  delay(2000);  // 2 second delay.
+  momentum.begin();    // Begin communication with Momentum.
 }
 
 void loop() {
-  // Create variable to track all data.
-  sensor_data_t data;
-
   // Get all data.
   momentum.getAll(data);
 
-  // momentum.printDataSingleLine(data); // Print data as a single line.
   momentum.printData(data);  // Print data nicely.
+  // Or alternatively print .csv style data in a single line:
+  // momentum.printDataSingleLine(data); // Print data as a single line.
 
   delay(250);  // 250 millisecond delay between prints.
 }
