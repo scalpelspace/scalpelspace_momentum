@@ -274,8 +274,8 @@ void Momentum::printData(const sensor_data_t &d) {
   _serial->print("  Pressure (Pa): ");
   _serial->println(d.pressure, 3);
 
-  // -- GPS date & time.
-  _serial->print("GPS Date: ");
+  // -- GNSS date & time.
+  _serial->print("GNSS Date: ");
   // Note: year is stored as two-digit year; adjust if you want full YYYY.
   _serial->print(d.year + 2000);
   _serial->print("/");
@@ -289,8 +289,8 @@ void Momentum::printData(const sensor_data_t &d) {
   _serial->print(":");
   _serial->println(d.second);
 
-  // -- GPS position.
-  _serial->print("GPS Pos: ");
+  // -- GNSS position.
+  _serial->print("GNSS Pos: ");
   _serial->print(d.latitude, 6);
   _serial->print(" (");
   _serial->print(d.latitude_dir);
@@ -302,13 +302,13 @@ void Momentum::printData(const sensor_data_t &d) {
   _serial->print(")");
   _serial->println();
 
-  // -- GPS altitude/geoid separation.
+  // -- GNSS altitude/geoid separation.
   _serial->print("Alt (m): ");
   _serial->print(d.altitude, 3);
   _serial->print("  GeoidSep (m): ");
   _serial->println(d.geoid_sep, 3);
 
-  // -- GPS speed & heading.
+  // -- GNSS speed & heading.
   _serial->print("Speed (knots): ");
   _serial->print(d.ground_speed, 3);
   _serial->print("  Course (deg): ");
@@ -318,7 +318,7 @@ void Momentum::printData(const sensor_data_t &d) {
   _serial->print(d.magnetic_var_dir);
   _serial->println();
 
-  // -- GPS fix/satellites/HDOP.
+  // -- GNSS fix/satellites/HDOP.
   _serial->print("Fix Type: ");
   _serial->print(d.gps_position_fix);
   _serial->print("  Sats: ");
@@ -384,7 +384,7 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(d.pressure, 3);
   _serial->print(',');
 
-  // -- GPS Date (day, month, year-2000).
+  // -- GNSS Date (day, month, year-2000).
   _serial->print(d.day);
   _serial->print(',');
   _serial->print(d.month);
@@ -392,7 +392,7 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(d.year);
   _serial->print(',');
 
-  // -- GPS Time (hour, minute, second).
+  // -- GNSS Time (hour, minute, second).
   _serial->print(d.hour);
   _serial->print(',');
   _serial->print(d.minute);
@@ -400,25 +400,25 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(d.second);
   _serial->print(',');
 
-  // -- GPS Lat (value, direction).
+  // -- GNSS Lat (value, direction).
   _serial->print(d.latitude, 6);
   _serial->print(',');
   _serial->print(d.latitude_dir);
   _serial->print(',');
 
-  // -- GPS Lon (value, direction).
+  // -- GNSS Lon (value, direction).
   _serial->print(d.longitude, 6);
   _serial->print(',');
   _serial->print(d.longitude_dir);
   _serial->print(',');
 
-  // -- GPS altitude, geoid separation.
+  // -- GNSS altitude, geoid separation.
   _serial->print(d.altitude, 3);
   _serial->print(',');
   _serial->print(d.geoid_sep, 3);
   _serial->print(',');
 
-  // -- GPS speed, course, magnetic variation, magnetic variation direction.
+  // -- GNSS speed, course, magnetic variation, magnetic variation direction.
   _serial->print(d.ground_speed, 3);
   _serial->print(',');
   _serial->print(d.ground_course, 3);
@@ -427,7 +427,7 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(',');
   _serial->print(d.magnetic_var_dir);
 
-  // -- GPS fix, satellites, HDOP.
+  // -- GNSS fix, satellites, HDOP.
   _serial->print(d.gps_position_fix);
   _serial->print(',');
   _serial->print(d.satellites);
