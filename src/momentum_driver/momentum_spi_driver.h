@@ -1,11 +1,11 @@
 /*******************************************************************************
- * @file momentum_driver.h
+ * @file momentum_spi_driver.h
  * @brief Momentum driver for SPI based communication.
  *******************************************************************************
  */
 
-#ifndef MOMENTUM__DRIVER_H
-#define MOMENTUM__DRIVER_H
+#ifndef MOMENTUM__SPI_DRIVER_H
+#define MOMENTUM__SPI_DRIVER_H
 
 /** Includes. *****************************************************************/
 

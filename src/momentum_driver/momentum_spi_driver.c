@@ -1,12 +1,12 @@
 /*******************************************************************************
- * @file momentum_driver.c
+ * @file momentum_spi_driver.c
  * @brief Momentum driver for SPI based communication.
  *******************************************************************************
  */
 
 /** Includes. *****************************************************************/
 
-#include "momentum_driver.h"
+#include "momentum_spi_driver.h"
 
 /** Private functions. ********************************************************/
 

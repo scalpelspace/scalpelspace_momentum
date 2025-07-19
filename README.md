@@ -24,7 +24,7 @@ Arduino library for SPI communication with the ScalpelSpace Momentum dev board.
 
 Utilizes a local copy of [
 `momentum_driver`](https://github.com/scalpelspace/momentum_driver) for low
-level SPI operations.
+level SPI operations (local copy only includes the C files).
 
 - Git submodule not utilized per [Arduino's
   `library-registry` FAQ](https://github.com/arduino/library-registry/blob/main/FAQ.md#are-git-submodules-supported).

@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#include "momentum_driver.h"
+#include "momentum_driver/momentum_driver.h"
 
 #ifdef __cplusplus
 }
