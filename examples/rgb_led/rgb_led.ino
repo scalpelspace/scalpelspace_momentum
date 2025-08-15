@@ -1,8 +1,6 @@
 /*******************************************************************************
  * @file rgb_led.ino
  * @brief Momentum dev board simple RGB LED control example.
- *
- * Application/full demos: https://github.com/scalpelspace/momentum_demo.
  *******************************************************************************
  */
 

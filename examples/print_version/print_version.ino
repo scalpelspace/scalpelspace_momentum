@@ -1,8 +1,6 @@
 /*******************************************************************************
  * @file print_version.ino
  * @brief Get the running Momentum dev board firmware version.
- *
- * Application/full demos: https://github.com/scalpelspace/momentum_demo.
  *******************************************************************************
  */
 

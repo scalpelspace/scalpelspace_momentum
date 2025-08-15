@@ -1,8 +1,6 @@
 /*******************************************************************************
  * @file print_data.ino
  * @brief Momentum dev board sensor data print example.
- *
- * Application/full demos: https://github.com/scalpelspace/momentum_demo.
  *******************************************************************************
  */
 

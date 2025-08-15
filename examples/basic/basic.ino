@@ -1,8 +1,6 @@
 /*******************************************************************************
  * @file basic.ino
  * @brief Basic sensor data access and print example.
- *
- * Application/full demos: https://github.com/scalpelspace/momentum_demo.
  *******************************************************************************
  */
 
