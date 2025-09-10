@@ -55,7 +55,7 @@ momentum_status_t Momentum::requestData(uint8_t frameType, sensor_data_t &data,
   sendMomentumFrame(request);
 
   // TODO: Validate! Small pause to let the SPI peripheral device to load.
-  delayMicroseconds(100);
+  delayMicroseconds(50);
 
   // Clock in response.
   _spi->beginTransaction(_settings);
