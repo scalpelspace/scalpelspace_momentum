@@ -147,6 +147,23 @@ uint8_t parse_gyro_payload(const momentum_frame_t *f, sensor_data_t *s) {
   return (uint8_t)(p - f->payload);
 }
 
+uint8_t build_mag_payload(momentum_frame_t *f, sensor_data_t *s) {
+  uint8_t *start = f->payload;
+  uint8_t *p = f->payload;
+  p = pack_float_32(p, s->mag_x);
+  p = pack_float_32(p, s->mag_y);
+  p = pack_float_32(p, s->mag_z);
+  return update_payload_length(f, start, p);
+}
+
+uint8_t parse_mag_payload(const momentum_frame_t *f, sensor_data_t *s) {
+  const uint8_t *p = f->payload;
+  p = unpack_float_32(p, &s->mag_x);
+  p = unpack_float_32(p, &s->mag_y);
+  p = unpack_float_32(p, &s->mag_z);
+  return (uint8_t)(p - f->payload);
+}
+
 uint8_t build_accel_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
@@ -214,7 +231,7 @@ uint8_t parse_pressure_temp_payload(const momentum_frame_t *f,
   return (uint8_t)(p - f->payload);
 }
 
-uint8_t build_gps_datetime_payload(momentum_frame_t *f, sensor_data_t *s) {
+uint8_t build_gnss_datetime_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
   p = pack_uint_8(p, s->hour);
@@ -226,8 +243,8 @@ uint8_t build_gps_datetime_payload(momentum_frame_t *f, sensor_data_t *s) {
   return update_payload_length(f, start, p);
 }
 
-uint8_t parse_gps_datetime_payload(const momentum_frame_t *f,
-                                   sensor_data_t *s) {
+uint8_t parse_gnss_datetime_payload(const momentum_frame_t *f,
+                                    sensor_data_t *s) {
   const uint8_t *p = f->payload;
   p = unpack_uint_8(p, &s->hour);
   p = unpack_uint_8(p, &s->minute);
@@ -238,7 +255,7 @@ uint8_t parse_gps_datetime_payload(const momentum_frame_t *f,
   return (uint8_t)(p - f->payload);
 }
 
-uint8_t build_gps_coord_payload(momentum_frame_t *f, sensor_data_t *s) {
+uint8_t build_gnss_coord_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
   p = pack_float_32(p, s->latitude);
@@ -248,7 +265,7 @@ uint8_t build_gps_coord_payload(momentum_frame_t *f, sensor_data_t *s) {
   return update_payload_length(f, start, p);
 }
 
-uint8_t parse_gps_coord_payload(const momentum_frame_t *f, sensor_data_t *s) {
+uint8_t parse_gnss_coord_payload(const momentum_frame_t *f, sensor_data_t *s) {
   const uint8_t *p = f->payload;
   p = unpack_float_32(p, &s->latitude);
   p = unpack_char_8(p, &s->latitude_dir);
@@ -257,8 +274,8 @@ uint8_t parse_gps_coord_payload(const momentum_frame_t *f, sensor_data_t *s) {
   return (uint8_t)(p - f->payload);
 }
 
-uint8_t build_gps_altitude_speed_payload(momentum_frame_t *f,
-                                         sensor_data_t *s) {
+uint8_t build_gnss_altitude_speed_payload(momentum_frame_t *f,
+                                          sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
   p = pack_float_32(p, s->altitude);
@@ -267,8 +284,8 @@ uint8_t build_gps_altitude_speed_payload(momentum_frame_t *f,
   return update_payload_length(f, start, p);
 }
 
-uint8_t parse_gps_altitude_speed_payload(const momentum_frame_t *f,
-                                         sensor_data_t *s) {
+uint8_t parse_gnss_altitude_speed_payload(const momentum_frame_t *f,
+                                          sensor_data_t *s) {
   const uint8_t *p = f->payload;
   p = unpack_float_32(p, &s->altitude);
   p = unpack_float_32(p, &s->geoid_sep);
@@ -276,7 +293,7 @@ uint8_t parse_gps_altitude_speed_payload(const momentum_frame_t *f,
   return (uint8_t)(p - f->payload);
 }
 
-uint8_t build_gps_heading_payload(momentum_frame_t *f, sensor_data_t *s) {
+uint8_t build_gnss_heading_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
   p = pack_float_32(p, s->ground_course);
@@ -285,7 +302,8 @@ uint8_t build_gps_heading_payload(momentum_frame_t *f, sensor_data_t *s) {
   return update_payload_length(f, start, p);
 }
 
-uint8_t parse_gps_heading_payload(const momentum_frame_t *f, sensor_data_t *s) {
+uint8_t parse_gnss_heading_payload(const momentum_frame_t *f,
+                                   sensor_data_t *s) {
   const uint8_t *p = f->payload;
   p = unpack_float_32(p, &s->ground_course);
   p = unpack_float_32(p, &s->magnetic_var);
@@ -293,18 +311,18 @@ uint8_t parse_gps_heading_payload(const momentum_frame_t *f, sensor_data_t *s) {
   return (uint8_t)(p - f->payload);
 }
 
-uint8_t build_gps_stats_payload(momentum_frame_t *f, sensor_data_t *s) {
+uint8_t build_gnss_stats_payload(momentum_frame_t *f, sensor_data_t *s) {
   uint8_t *start = f->payload;
   uint8_t *p = f->payload;
-  p = pack_uint_8(p, s->gps_position_fix);
+  p = pack_uint_8(p, s->gnss_position_fix);
   p = pack_uint_8(p, s->satellites);
   p = pack_float_32(p, s->hdop);
   return update_payload_length(f, start, p);
 }
 
-uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s) {
+uint8_t parse_gnss_stats_payload(const momentum_frame_t *f, sensor_data_t *s) {
   const uint8_t *p = f->payload;
-  p = unpack_uint_8(p, &s->gps_position_fix);
+  p = unpack_uint_8(p, &s->gnss_position_fix);
   p = unpack_uint_8(p, &s->satellites);
   p = unpack_float_32(p, &s->hdop);
   return (uint8_t)(p - f->payload);
@@ -349,6 +367,9 @@ momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
   case MOMENTUM_FRAME_TYPE_IMU_GYRO:
     parse_gyro_payload(f, s);
     break;
+  case MOMENTUM_FRAME_TYPE_IMU_MAG:
+    parse_mag_payload(f, s);
+    break;
   case MOMENTUM_FRAME_TYPE_IMU_ACCEL:
     parse_accel_payload(f, s);
     break;
@@ -361,20 +382,20 @@ momentum_status_t parse_momentum_response_frame(const momentum_frame_t *f,
   case MOMENTUM_FRAME_TYPE_BAR_ENV:
     parse_pressure_temp_payload(f, s);
     break;
-  case MOMENTUM_FRAME_TYPE_GPS_DATETIME:
-    parse_gps_datetime_payload(f, s);
+  case MOMENTUM_FRAME_TYPE_GNSS_DATETIME:
+    parse_gnss_datetime_payload(f, s);
     break;
-  case MOMENTUM_FRAME_TYPE_GPS_COORD:
-    parse_gps_coord_payload(f, s);
+  case MOMENTUM_FRAME_TYPE_GNSS_COORD:
+    parse_gnss_coord_payload(f, s);
     break;
-  case MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED:
-    parse_gps_altitude_speed_payload(f, s);
+  case MOMENTUM_FRAME_TYPE_GNSS_ALT_SPEED:
+    parse_gnss_altitude_speed_payload(f, s);
     break;
-  case MOMENTUM_FRAME_TYPE_GPS_HEAD:
-    parse_gps_heading_payload(f, s);
+  case MOMENTUM_FRAME_TYPE_GNSS_HEAD:
+    parse_gnss_heading_payload(f, s);
     break;
-  case MOMENTUM_FRAME_TYPE_GPS_STATS:
-    parse_gps_stats_payload(f, s);
+  case MOMENTUM_FRAME_TYPE_GNSS_STATS:
+    parse_gnss_stats_payload(f, s);
     break;
   default:
     return MOMENTUM_ERROR_FRAME_TYPE;

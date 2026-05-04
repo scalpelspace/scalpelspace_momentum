@@ -44,6 +44,7 @@ public:
   // Request sensor data.
   momentum_status_t getQuat(sensor_data_t &data);
   momentum_status_t getGyro(sensor_data_t &data);
+  momentum_status_t getMag(sensor_data_t &data);
   momentum_status_t getAccel(sensor_data_t &data);
   momentum_status_t getLinAccel(sensor_data_t &data);
   momentum_status_t getGrav(sensor_data_t &data);

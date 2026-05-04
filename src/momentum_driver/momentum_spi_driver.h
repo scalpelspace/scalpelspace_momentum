@@ -42,17 +42,18 @@ extern "C" {
 
 #define MOMENTUM_FRAME_TYPE_IMU_ACCEL 0x71 // SH-2 ID + 0x70.
 #define MOMENTUM_FRAME_TYPE_IMU_GYRO 0x72
+#define MOMENTUM_FRAME_TYPE_IMU_MAG 0x73
 #define MOMENTUM_FRAME_TYPE_IMU_LINACCEL 0x74
 #define MOMENTUM_FRAME_TYPE_IMU_QUAT 0x75
 #define MOMENTUM_FRAME_TYPE_IMU_GRAV 0x76
 
 #define MOMENTUM_FRAME_TYPE_BAR_ENV 0xA0
 
-#define MOMENTUM_FRAME_TYPE_GPS_DATETIME 0xB0
-#define MOMENTUM_FRAME_TYPE_GPS_COORD 0xB1
-#define MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED 0xB2
-#define MOMENTUM_FRAME_TYPE_GPS_HEAD 0xB3
-#define MOMENTUM_FRAME_TYPE_GPS_STATS 0xB4
+#define MOMENTUM_FRAME_TYPE_GNSS_DATETIME 0xB0
+#define MOMENTUM_FRAME_TYPE_GNSS_COORD 0xB1
+#define MOMENTUM_FRAME_TYPE_GNSS_ALT_SPEED 0xB2
+#define MOMENTUM_FRAME_TYPE_GNSS_HEAD 0xB3
+#define MOMENTUM_FRAME_TYPE_GNSS_STATS 0xB4
 
 /** Public types. *************************************************************/
 
@@ -98,6 +99,9 @@ typedef struct {
   float gyro_x;
   float gyro_y;
   float gyro_z;
+  float mag_x;
+  float mag_y;
+  float mag_z;
   float accel_x;
   float accel_y;
   float accel_z;
@@ -109,7 +113,7 @@ typedef struct {
   float gravity_z;
   float temperature;
   float pressure;
-  uint8_t gps_position_fix;
+  uint8_t gnss_position_fix;
   uint8_t year;          // RTC date, year.
   uint8_t month;         // RTC date, month.
   uint8_t day;           // RTC date, day.
@@ -246,6 +250,32 @@ uint8_t build_gyro_payload(momentum_frame_t *f, sensor_data_t *s);
 uint8_t parse_gyro_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
+ * @brief Pack magnetometer data into the frame payload.
+ *
+ * Serializes magnetometer readings (x, y, z) from the provided sensor data into
+ * the frame payload. Updates f->length accordingly.
+ *
+ * @param f Pointer to the frame to populate.
+ * @param s Pointer to the sensor_data_t containing source magnetometer values.
+ *
+ * @return Number of bytes written into f->payload.
+ */
+uint8_t build_mag_payload(momentum_frame_t *f, sensor_data_t *s);
+
+/**
+ * @brief Unpack magnetometer data from the frame payload.
+ *
+ * Deserializes magnetometer readings (x, y, z) from the provided frame payload
+ * into sensor data.
+ *
+ * @param f Pointer to the frame to read.
+ * @param s Pointer to the sensor_data_t to update magnetometer values.
+ *
+ * @return Number of bytes read (== f->length).
+ */
+uint8_t parse_mag_payload(const momentum_frame_t *f, sensor_data_t *s);
+
+/**
  * @brief Pack accelerometer data into the frame payload.
  *
  * Serializes accelerometer readings (x, y, z) from the provided sensor data
@@ -354,142 +384,145 @@ uint8_t parse_pressure_temp_payload(const momentum_frame_t *f,
                                     sensor_data_t *s);
 
 /**
- * @brief Pack GPS date and time data into the frame payload.
+ * @brief Pack GNSS date and time data into the frame payload.
  *
- * Serializes GPS date and time fields (hour, minute, second, day, month, year)
+ * Serializes GNSS date and time fields (hour, minute, second, day, month, year)
  * from the provided sensor data into the frame payload. Updates f->length
  * accordingly.
  *
  * @param f Pointer to the frame to populate.
- * @param s Pointer to the sensor_data_t containing source GPS date/time values.
+ * @param s Pointer to the sensor_data_t containing source GNSS date/time
+ *          values.
  *
  * @return Number of bytes written into f->payload.
  */
-uint8_t build_gps_datetime_payload(momentum_frame_t *f, sensor_data_t *s);
+uint8_t build_gnss_datetime_payload(momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Unpack GPS date and time data from the frame payload.
+ * @brief Unpack GNSS date and time data from the frame payload.
  *
- * Deserializes GPS date and time fields (hour, minute, second, day, month,
+ * Deserializes GNSS date and time fields (hour, minute, second, day, month,
  * year) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
- * @param s Pointer to the sensor_data_t to update GPS date/time values.
+ * @param s Pointer to the sensor_data_t to update GNSS date/time values.
  *
  * @return Number of bytes read (== f->length).
  */
-uint8_t parse_gps_datetime_payload(const momentum_frame_t *f, sensor_data_t *s);
+uint8_t parse_gnss_datetime_payload(const momentum_frame_t *f,
+                                    sensor_data_t *s);
 
 /**
- * @brief Pack GPS coordinate data into the frame payload.
+ * @brief Pack GNSS coordinate data into the frame payload.
  *
- * Serializes GPS position fields (latitude, latitude direction, longitude,
+ * Serializes GNSS position fields (latitude, latitude direction, longitude,
  * longitude direction) from the provided sensor data into the frame payload.
  * Updates f->length accordingly.
  *
  * @param f Pointer to the frame to populate.
- * @param s Pointer to the sensor_data_t containing source GPS coordinates.
+ * @param s Pointer to the sensor_data_t containing source GNSS coordinates.
  *
  * @return Number of bytes written into f->payload.
  */
-uint8_t build_gps_coord_payload(momentum_frame_t *f, sensor_data_t *s);
+uint8_t build_gnss_coord_payload(momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Unpack GPS coordinate data from the frame payload.
+ * @brief Unpack GNSS coordinate data from the frame payload.
  *
- * Deserializes GPS position fields (latitude, latitude direction, longitude,
+ * Deserializes GNSS position fields (latitude, latitude direction, longitude,
  * longitude direction) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
- * @param s Pointer to the sensor_data_t to update GPS coordinates.
+ * @param s Pointer to the sensor_data_t to update GNSS coordinates.
  *
  * @return Number of bytes read (== f->length).
  */
-uint8_t parse_gps_coord_payload(const momentum_frame_t *f, sensor_data_t *s);
+uint8_t parse_gnss_coord_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Pack GPS altitude and speed data into the frame payload.
+ * @brief Pack GNSS altitude and speed data into the frame payload.
  *
- * Serializes GPS altitude fields (altitude, geoidal separation) and speed
+ * Serializes GNSS altitude fields (altitude, geoidal separation) and speed
  * (speed knots) from the provided sensor data into the frame payload. Updates
  * f->length accordingly.
  *
  * @param f Pointer to the frame to populate.
- * @param s Pointer to the sensor_data_t containing source GPS altitude and
+ * @param s Pointer to the sensor_data_t containing source GNSS altitude and
  *          speed values.
  *
  * @return Number of bytes written into f->payload.
  */
-uint8_t build_gps_altitude_speed_payload(momentum_frame_t *f, sensor_data_t *s);
+uint8_t build_gnss_altitude_speed_payload(momentum_frame_t *f,
+                                          sensor_data_t *s);
 
 /**
- * @brief Unpack GPS altitude and speed data from the frame payload.
+ * @brief Unpack GNSS altitude and speed data from the frame payload.
  *
- * Deserializes GPS altitude fields (altitude, geoidal separation) and speed
+ * Deserializes GNSS altitude fields (altitude, geoidal separation) and speed
  * (speed knots) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
- * @param s Pointer to the sensor_data_t to update GPS altitude and speed
+ * @param s Pointer to the sensor_data_t to update GNSS altitude and speed
  *          values.
  *
  * @return Number of bytes read (== f->length).
  */
-uint8_t parse_gps_altitude_speed_payload(const momentum_frame_t *f,
-                                         sensor_data_t *s);
+uint8_t parse_gnss_altitude_speed_payload(const momentum_frame_t *f,
+                                          sensor_data_t *s);
 
 /**
- * @brief Pack GPS heading data into the frame payload.
+ * @brief Pack GNSS heading data into the frame payload.
  *
- * Serializes GPS heading fields (course, magnetic variation, magnetic variation
- * direction) from the provided sensor data into the frame payload. Updates
- * f->length accordingly.
+ * Serializes GNSS heading fields (course, magnetic variation, magnetic
+ * variation direction) from the provided sensor data into the frame payload.
+ * Updates f->length accordingly.
  *
  * @param f Pointer to the frame to populate.
- * @param s Pointer to the sensor_data_t containing source GPS heading values.
+ * @param s Pointer to the sensor_data_t containing source GNSS heading values.
  *
  * @return Number of bytes written into f->payload.
  */
-uint8_t build_gps_heading_payload(momentum_frame_t *f, sensor_data_t *s);
+uint8_t build_gnss_heading_payload(momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Unpack GPS heading data from the frame payload.
+ * @brief Unpack GNSS heading data from the frame payload.
  *
- * Deserializes GPS heading fields (course, magnetic variation, magnetic
+ * Deserializes GNSS heading fields (course, magnetic variation, magnetic
  * variation direction) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
- * @param s Pointer to the sensor_data_t to update GPS heading values.
+ * @param s Pointer to the sensor_data_t to update GNSS heading values.
  *
  * @return Number of bytes read (== f->length).
  */
-uint8_t parse_gps_heading_payload(const momentum_frame_t *f, sensor_data_t *s);
+uint8_t parse_gnss_heading_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Pack GPS status and statistics into the frame payload.
+ * @brief Pack GNSS status and statistics into the frame payload.
  *
- * Serializes GPS status fields (position fix type, number of satellites, HDOP)
+ * Serializes GNSS status fields (position fix type, number of satellites, HDOP)
  * from the provided sensor data into the frame payload. Updates f->length
  * accordingly.
  *
  * @param f Pointer to the frame to populate.
- * @param s Pointer to the sensor_data_t containing source GPS status values.
+ * @param s Pointer to the sensor_data_t containing source GNSS status values.
  *
  * @return Number of bytes written into f->payload.
  */
-uint8_t build_gps_stats_payload(momentum_frame_t *f, sensor_data_t *s);
+uint8_t build_gnss_stats_payload(momentum_frame_t *f, sensor_data_t *s);
 
 /**
- * @brief Unpack GPS status and statistics from the frame payload.
+ * @brief Unpack GNSS status and statistics from the frame payload.
  *
- * Deserializes GPS status fields (position fix type, number of satellites,
+ * Deserializes GNSS status fields (position fix type, number of satellites,
  * HDOP) from the provided frame payload into sensor data.
  *
  * @param f Pointer to the frame to read.
- * @param s Pointer to the sensor_data_t to update GPS status values.
+ * @param s Pointer to the sensor_data_t to update GNSS status values.
  *
  * @return Number of bytes read (== f->length).
  */
-uint8_t parse_gps_stats_payload(const momentum_frame_t *f, sensor_data_t *s);
+uint8_t parse_gnss_stats_payload(const momentum_frame_t *f, sensor_data_t *s);
 
 /**
  * @brief Pack LED data into the frame payload.

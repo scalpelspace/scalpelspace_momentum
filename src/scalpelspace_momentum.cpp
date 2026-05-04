@@ -107,15 +107,16 @@ void Momentum::getAll(sensor_data_t &data) {
   version_t dummy;
   requestData(MOMENTUM_FRAME_TYPE_IMU_QUAT, data, dummy);
   requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_IMU_MAG, data, dummy);
   requestData(MOMENTUM_FRAME_TYPE_IMU_ACCEL, data, dummy);
   requestData(MOMENTUM_FRAME_TYPE_IMU_LINACCEL, data, dummy);
   requestData(MOMENTUM_FRAME_TYPE_IMU_GRAV, data, dummy);
   requestData(MOMENTUM_FRAME_TYPE_BAR_ENV, data, dummy);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data, dummy);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data, dummy);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data, dummy);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data, dummy);
-  requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GNSS_DATETIME, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GNSS_COORD, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GNSS_ALT_SPEED, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GNSS_HEAD, data, dummy);
+  requestData(MOMENTUM_FRAME_TYPE_GNSS_STATS, data, dummy);
 }
 
 momentum_status_t Momentum::getQuat(sensor_data_t &data) {
@@ -126,6 +127,11 @@ momentum_status_t Momentum::getQuat(sensor_data_t &data) {
 momentum_status_t Momentum::getGyro(sensor_data_t &data) {
   version_t dummy;
   return requestData(MOMENTUM_FRAME_TYPE_IMU_GYRO, data, dummy);
+}
+
+momentum_status_t Momentum::getMag(sensor_data_t &data) {
+  version_t dummy;
+  return requestData(MOMENTUM_FRAME_TYPE_IMU_MAG, data, dummy);
 }
 
 momentum_status_t Momentum::getAccel(sensor_data_t &data) {
@@ -150,27 +156,27 @@ momentum_status_t Momentum::getEnv(sensor_data_t &data) {
 
 momentum_status_t Momentum::getDateTime(sensor_data_t &data) {
   version_t dummy;
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_DATETIME, data, dummy);
+  return requestData(MOMENTUM_FRAME_TYPE_GNSS_DATETIME, data, dummy);
 }
 
 momentum_status_t Momentum::getCoord(sensor_data_t &data) {
   version_t dummy;
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_COORD, data, dummy);
+  return requestData(MOMENTUM_FRAME_TYPE_GNSS_COORD, data, dummy);
 }
 
 momentum_status_t Momentum::getAltSpeed(sensor_data_t &data) {
   version_t dummy;
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_ALT_SPEED, data, dummy);
+  return requestData(MOMENTUM_FRAME_TYPE_GNSS_ALT_SPEED, data, dummy);
 }
 
 momentum_status_t Momentum::getHeading(sensor_data_t &data) {
   version_t dummy;
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_HEAD, data, dummy);
+  return requestData(MOMENTUM_FRAME_TYPE_GNSS_HEAD, data, dummy);
 }
 
 momentum_status_t Momentum::getStats(sensor_data_t &data) {
   version_t dummy;
-  return requestData(MOMENTUM_FRAME_TYPE_GPS_STATS, data, dummy);
+  return requestData(MOMENTUM_FRAME_TYPE_GNSS_STATS, data, dummy);
 }
 
 momentum_status_t Momentum::reset(void) {
@@ -243,6 +249,14 @@ void Momentum::printData(const sensor_data_t &d) {
   _serial->print(d.gyro_y, 6);
   _serial->print(", ");
   _serial->println(d.gyro_z, 6);
+
+  // -- IMU magnetometer.
+  _serial->print("Mag: ");
+  _serial->print(d.mag_x, 6);
+  _serial->print(", ");
+  _serial->print(d.mag_y, 6);
+  _serial->print(", ");
+  _serial->println(d.mag_z, 6);
 
   // -- IMU accelerometer.
   _serial->print("Accel: ");
@@ -320,7 +334,7 @@ void Momentum::printData(const sensor_data_t &d) {
 
   // -- GNSS fix/satellites/HDOP.
   _serial->print("Fix Type: ");
-  _serial->print(d.gps_position_fix);
+  _serial->print(d.gnss_position_fix);
   _serial->print("  Sats: ");
   _serial->print(d.satellites);
   _serial->print("  HDOP: ");
@@ -352,6 +366,14 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(d.gyro_y, 6);
   _serial->print(',');
   _serial->print(d.gyro_z, 6);
+  _serial->print(',');
+
+  // -- Mag (x, y, z).
+  _serial->print(d.mag_x, 6);
+  _serial->print(',');
+  _serial->print(d.mag_y, 6);
+  _serial->print(',');
+  _serial->print(d.mag_z, 6);
   _serial->print(',');
 
   // -- Accel (x, y, z).
@@ -428,7 +450,7 @@ void Momentum::printDataSingleLine(const sensor_data_t &d) {
   _serial->print(d.magnetic_var_dir);
 
   // -- GNSS fix, satellites, HDOP.
-  _serial->print(d.gps_position_fix);
+  _serial->print(d.gnss_position_fix);
   _serial->print(',');
   _serial->print(d.satellites);
   _serial->print(',');
